@@ -8,6 +8,9 @@ const hbs          = require('hbs');
 const mongoose     = require('mongoose');
 const logger       = require('morgan');
 const path         = require('path');
+const session      = require('express-session')
+const Mongostore   = require('connect-mongo') (session)
+
 
 mongoose
   .connect('mongodb://localhost/starter-code', 
@@ -23,6 +26,15 @@ const app_name = require('./package.json').name;
 const debug = require('debug')(`${app_name}:${path.basename(__filename).split('.')[0]}`);
 
 const app = express();
+
+app.use(session ({
+  secret: process.env.SESSION_SECRET,
+  resave: true,
+  saveUninitialized: true,
+  store: new Mongostore ({
+    mongooseConnection: mongoose.connection
+  })
+}))
 
 // Middleware Setup
 app.use(logger('dev'));
@@ -47,7 +59,7 @@ app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 
 
 // default value for title local
-app.locals.title = 'Express - Generated with IronGenerator';
+app.locals.title = 'Welcome to the Markie Mark sign in page!';
 
 
 // Routes
